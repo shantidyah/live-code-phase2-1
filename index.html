@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Index</title>
+</head>
+<body>
+        <div id="app">
+            <h2>Request Token</h2>
+            <h4>email :</h4><br>
+            <input type="text" email="email" value="email" v-model="email"><br>
+            <h4>name :</h4><br>
+            <input type="text" name="name" value="name" v-model="name"><br>
+            <input type="button" value="request" v-on:click="reqToken">
+
+            <h3> {{name}} </h3>
+        </div>
+
+        <script>
+            var app = new Vue({
+                el: '#app',
+                data: {
+                    email : '',
+                    name : ''
+                },
+                methods:{
+                    reqToken: function(){
+                        axios.post('http://35.240.157.177/request-token',{
+                                email:this.email,
+                                name:this.name
+                        },{
+
+                        })
+                        .then(data => {
+                            console.log(data.data.uuid);
+                            localStorage.setItem("token", data.data.uuid)
+                            window.location ='home.html'
+
+                        })
+                        .catch(error => {
+                            console.log('error')
+                        })
+                    }
+                }
+            })
+        
+        </script>
+</body>
+</html>

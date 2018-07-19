@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Home</title>
+</head>
+<body>
+    <div id="app">
+        <input type="file" v-on:change="addFile"><br>
+        <input type="button" v-on:click="uploadFile" value="upload"><br><br>
+            <div class="row">
+                <div class="col-md-0 col-sm-0 productbox" v-for="file in files">
+                    <img v-bind:src="file.url" class="img-responsive">
+                    <p> Author : {{file.user.name}}</p>
+                </div>
+            </div>
+    </div>
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                files : '',
+                img : ''
+            },
+            created:function(){
+                this.getImage()
+            },
+            methods:{
+                getImage() {
+                    let uuid = localStorage.getItem('token')
+                    axios.get('http://35.240.157.177/image', {
+                        headers:{
+                             authorization: uuid
+                        }   
+                    })
+                    .then(response => {
+                        console.log(response.data);
+                        this.files = response.data
+
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+                },
+                addFile(e){
+                    this.img = e.target.files[0]
+                },
+                uploadFile(){
+                    let formData = new FormData()
+                    formData.append('file',this.img)
+                    let uuid = localStorage.getItem('token')
+                    
+                    axios({
+                        url: 'http://35.240.157.177/image',
+                        method: 'post',
+                        data: formData,
+                        headers: {
+                            authorization: uuid
+                        }
+                    })
+                    .then(response=>{
+                        console.log(response.data[0].url);
+                        
+                    })
+                    .catch(err=>{
+                        console.log(err);
+                        
+                    })
+                }
+
+
+            }
+        })
+    </script>
+</body>
+</html>
